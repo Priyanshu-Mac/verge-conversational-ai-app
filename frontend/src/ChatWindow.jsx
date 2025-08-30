@@ -1,0 +1,105 @@
+import "./ChatWindow.css";
+import Chat from "./Chat.jsx";
+import { Origami, Send } from "lucide-react";
+import { MyContext } from "./MyContext.jsx";
+import { useContext, useState } from "react";
+import {BounceLoader} from "react-spinners";
+
+function ChatWindow() {
+  const {prompt, setPrompt, reply, setReply, currThreadId} = useContext(MyContext);
+  const [loadingState, setLoadingState] = useState(false);
+
+  const getReply = async () => {
+    setLoadingState(true);
+
+    // Only call the API if the prompt is not empty
+    if (!prompt || prompt.trim() === "") {
+        console.error("No message provided to Gemini API.");
+        return;
+    }
+
+    const options = {
+      method : "POST",
+      headers : {
+      "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message : prompt,
+        threadId : currThreadId
+      })
+      
+    }
+
+    try{
+      let response = await fetch("http://localhost:8080/api/chat", options);
+      let res = await response.json();
+      console.log(res);
+    }
+    catch(err){
+      console.log(err);
+    }
+    setLoadingState(false);
+  }
+  
+
+  const handleEnterPress = (e) => {
+    if(e.key == "Enter"){
+      getReply();
+    }
+  }
+
+  return (
+    
+    <div className="chatWindow flex flex-col bg-gradient-to-tr from-[#202938] to-[#111827] flex-1">
+
+      {/* Navbar */}
+      <div className="navbar text-[#F9FAFB] mt-4">
+        <span className="flex items-center space-x-2 text-xl font-bold ml-4">
+          <p className="mr-2">Sparrow</p>
+          <Origami size={26} strokeWidth={0.75} />
+        </span>
+        <div className="border-t border-gray-700 mt-4 mx-2"></div>
+      </div>
+
+      {/* Chats */}
+      <div className="flex-1 overflow-y-auto">
+        <Chat />
+      </div>
+      
+      {/* Loader */}
+      {loadingState && 
+        <div className="flex items-center justify-center mb-10">
+          <BounceLoader color="#4B5A75" speedMultiplier={1.2} size={50} loading={loadingState}/>
+        </div>
+      }
+
+
+      {/* ChatInput */}
+      <div className="p-4 mb-10">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-center space-x-4 p-2 bg-gray-800 rounded-3xl shadow-xl">
+            <input
+              type="text"
+              placeholder="Ask Sparrow"
+              className="flex-1 p-2 text-sm text-gray-200 bg-transparent rounded-full outline-none"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={handleEnterPress}
+
+            />
+            <button className="p-2 font-semibold text-white transition-all duration-200 ease-in-out rounded-full shadow-md bg-blue-600 hover:bg-blue-700 active:scale-95"
+            onClick={getReply}
+            >
+              <Send size={20} />
+            </button>
+          </div>
+          <div className="mt-4 pt-2 text-xs text-gray-400 border-t border-gray-700 text-center">
+            Sparrow can make mistakes. Consider double-checking important
+            information.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+export default ChatWindow;
