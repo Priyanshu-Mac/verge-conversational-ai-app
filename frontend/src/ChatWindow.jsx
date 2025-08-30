@@ -2,11 +2,11 @@ import "./ChatWindow.css";
 import Chat from "./Chat.jsx";
 import { Origami, Send } from "lucide-react";
 import { MyContext } from "./MyContext.jsx";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import {BounceLoader} from "react-spinners";
 
 function ChatWindow() {
-  const {prompt, setPrompt, reply, setReply, currThreadId} = useContext(MyContext);
+  const {prompt, setPrompt, reply, setReply, currThreadId, newChat, setnewChat, prevChat, setprevChat} = useContext(MyContext);
   const [loadingState, setLoadingState] = useState(false);
 
   const getReply = async () => {
@@ -17,6 +17,15 @@ function ChatWindow() {
         console.error("No message provided to Gemini API.");
         return;
     }
+
+    // Append the user's message to the chat history immediately
+    const userMessage = { role: "user", content: prompt };
+    setprevChat(prevChat => [...prevChat, userMessage]);
+    setnewChat(false); // Hide the welcome message
+
+    // Store the current prompt value before clearing it
+    const currentPrompt = prompt;
+    setPrompt("");
 
     const options = {
       method : "POST",
@@ -34,9 +43,16 @@ function ChatWindow() {
       let response = await fetch("http://localhost:8080/api/chat", options);
       let res = await response.json();
       console.log(res);
+
+      // Append the model's reply to the chat history
+      const modelMessage = { role: "model", content: res.reply };
+      setprevChat(prev => [...prev, modelMessage]);
+
     }
     catch(err){
       console.log(err);
+      //Add an error message to the chat
+      setprevChat(prev => [...prev, { role: "model", content: "Sorry, something went wrong. Please try again." }]);
     }
     setLoadingState(false);
   }
@@ -48,6 +64,8 @@ function ChatWindow() {
     }
   }
 
+
+
   return (
     
     <div className="chatWindow flex flex-col bg-gradient-to-tr from-[#202938] to-[#111827] flex-1">
@@ -55,7 +73,7 @@ function ChatWindow() {
       {/* Navbar */}
       <div className="navbar text-[#F9FAFB] mt-4">
         <span className="flex items-center space-x-2 text-xl font-bold ml-4">
-          <p className="mr-2">Sparrow</p>
+          <p className="mr-2">Verge</p>
           <Origami size={26} strokeWidth={0.75} />
         </span>
         <div className="border-t border-gray-700 mt-4 mx-2"></div>

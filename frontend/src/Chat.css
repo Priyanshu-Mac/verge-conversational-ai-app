@@ -1,1 +1,81 @@
 @import "tailwindcss";
+
+.welcome-message-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+}
+
+.welcome-text {
+  font-family: sans-serif;
+  font-weight: bold;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+.welcome-title {
+  background: linear-gradient(to right, #6366f1, #06b6d4, #10b981);
+  -webkit-background-clip: text;
+  color: transparent;
+  display: block;
+  font-size: 2.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.welcome-subtitle {
+  margin-top: 1rem;
+  display: block;
+  font-size: 1.125rem;
+  color: #cbd5e1;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.chats-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 48rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  row-gap: 1rem;
+}
+
+.chat-message-row {
+  font-size: 0.88rem;
+  width: 100%;
+  display: flex;
+}
+
+.user-row {
+  justify-content: flex-end;
+}
+
+.model-row {
+  justify-content: flex-start;
+}
+
+.chat-message {
+  padding: 0.7rem;
+  border-radius: 2rem;
+  max-width: 80%;
+}
+
+.user-msg {
+  background-color: #2564ebcd;
+  color: white;
+  border-bottom-right-radius: 0;
+}
+
+.model-msg {
+  /* No styles applied here as per your request */
+  color: #e2e8f0;
+}
