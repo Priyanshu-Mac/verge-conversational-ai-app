@@ -5,6 +5,7 @@ import { MyContext } from "./MyContext.jsx";
 import { useContext, useState, useEffect } from "react";
 import {BounceLoader} from "react-spinners";
 
+
 function ChatWindow() {
   const {prompt, setPrompt, reply, setReply, currThreadId, newChat, setnewChat, prevChat, setprevChat} = useContext(MyContext);
   const [loadingState, setLoadingState] = useState(false);
@@ -67,11 +68,11 @@ function ChatWindow() {
 
 
   return (
-    
-    <div className="chatWindow flex flex-col bg-gradient-to-tr from-[#202938] to-[#111827] flex-1">
+
+    <div className="chatWindow flex flex-col bg-gradient-to-tr from-[#202938] to-[#111827] flex-1 h-full">
 
       {/* Navbar */}
-      <div className="navbar text-[#F9FAFB] mt-4">
+      <div className="navbar text-[#F9FAFB] mt-4 flex-shrink-0">
         <span className="flex items-center space-x-2 text-xl font-bold ml-4">
           <p className="mr-2">Verge</p>
           <Origami size={26} strokeWidth={0.75} />
@@ -79,21 +80,20 @@ function ChatWindow() {
         <div className="border-t border-gray-700 mt-4 mx-2"></div>
       </div>
 
-      {/* Chats */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Chat Messages Container - This takes up remaining space */}
+      <div className="flex-1 overflow-y-auto min-h-0">
         <Chat />
+        
+        {/* Loader - Now inside the scrollable area */}
+        {loadingState && 
+          <div className="flex items-center justify-center py-10">
+            <BounceLoader color="#4B5A75" speedMultiplier={1.2} size={50} loading={loadingState}/>
+          </div>
+        }
       </div>
-      
-      {/* Loader */}
-      {loadingState && 
-        <div className="flex items-center justify-center mb-10">
-          <BounceLoader color="#4B5A75" speedMultiplier={1.2} size={50} loading={loadingState}/>
-        </div>
-      }
 
-
-      {/* ChatInput */}
-      <div className="p-4 mb-10">
+      {/* Fixed ChatInput - Always stays at bottom */}
+      <div className="flex-shrink-0 p-4">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center space-x-4 p-2 bg-gray-800 rounded-3xl shadow-xl">
             <input
@@ -103,10 +103,10 @@ function ChatWindow() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={handleEnterPress}
-
             />
-            <button className="p-2 font-semibold text-white transition-all duration-200 ease-in-out rounded-full shadow-md bg-blue-600 hover:bg-blue-700 active:scale-95"
-            onClick={getReply}
+            <button 
+              className="p-2 font-semibold text-white transition-all duration-200 ease-in-out rounded-full shadow-md bg-blue-600 hover:bg-blue-700 active:scale-95"
+              onClick={getReply}
             >
               <Send size={20} />
             </button>

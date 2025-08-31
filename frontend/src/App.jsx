@@ -20,7 +20,7 @@ function App() {
     newChat, setnewChat
   };
   return (
-    <div className='app font-mono flex'>
+    <div className='app font-mono flex h-screen'>
       <MyContext.Provider value = {providerValues}>
         <Sidebar/>
         <ChatWindow/>
